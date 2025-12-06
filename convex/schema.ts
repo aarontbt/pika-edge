@@ -29,6 +29,8 @@ export default defineSchema({
     description: v.optional(v.string()),
     cityId: v.id("cities"),
     category: v.string(),
+    subcategory: v.optional(v.string()), // e.g., "pokemon-tcg", "onepiece-tcg"
+    externalId: v.optional(v.string()),  // External source ID for deduplication
     priceLocal: v.number(),
     priceCurrency: v.string(),
     priceSpread: v.optional(v.number()),
@@ -41,10 +43,13 @@ export default defineSchema({
       v.literal("sold")
     ),
     createdAt: v.number(),
+    updatedAt: v.optional(v.number()),    // Track price updates
     expiresAt: v.optional(v.number()),
   })
     .index("by_city", ["cityId"])
     .index("by_category", ["category"])
+    .index("by_subcategory", ["subcategory"])
+    .index("by_external_id", ["externalId"])
     .index("by_status_created", ["status", "createdAt"])
     .index("by_city_category", ["cityId", "category"]),
 
@@ -119,4 +124,10 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_user_city", ["userId", "cityId"]),
+
+  // Ingest cache to avoid refetching too frequently
+  ingestCache: defineTable({
+    key: v.string(),         // e.g., "pokemon" or "onepiece"
+    lastFetched: v.number(), // timestamp in ms
+  }).index("by_key", ["key"]),
 });
