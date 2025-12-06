@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "npx convex codegen && next build",
+    "build": "if [ -n \"$CONVEX_DEPLOY_KEY\" ] || [ -n \"$CONVEX_SELF_HOSTED_URL\" ] || [ -n \"$CONVEX_SITE\" ]; then npx convex codegen; else echo \"Skipping convex codegen (no Convex deploy key provided)\"; fi && next build",
     "start": "next start",
     "lint": "eslint"
   },
