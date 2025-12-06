@@ -17,6 +17,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, MapPin, TrendingUp, ExternalLink } from "lucide-react";
 import { PRODUCT_CATEGORIES } from "@/lib/constants/categories";
 
+export const dynamic = "force-dynamic";
+
 type OpportunityListItem = {
   _id: Id<"opportunities">;
   title: string;

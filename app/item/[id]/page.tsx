@@ -26,6 +26,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { SocialPosts } from "@/components/sentiment/social-posts";
 
+export const dynamic = "force-dynamic";
+
 const typeIcons = {
   new_opportunity: Sparkles,
   price_drop: TrendingUp,

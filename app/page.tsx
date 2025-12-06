@@ -25,6 +25,8 @@ import { api } from "@/convex/_generated/api";
 import { TrendingOpportunities } from "@/components/home/trending-opportunities";
 import { Id } from "@/convex/_generated/dataModel";
 
+export const dynamic = "force-dynamic";
+
 type City = {
   _id: Id<"cities">;
   name: string;

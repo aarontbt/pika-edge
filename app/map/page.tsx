@@ -10,6 +10,8 @@ import { ArrowLeft, Menu, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 
+export const dynamic = "force-dynamic";
+
 export default function MapPage() {
   const [filters, setFilters] = useState<FeedFiltersState>({
     country: null,
