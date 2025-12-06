@@ -22,12 +22,10 @@ import {
 } from "lucide-react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { TrendingOpportunities } from "@/components/home/trending-opportunities";
 
 export default function Home() {
   const cities = useQuery(api.cities.list);
-  const recentOpportunities = useQuery(api.opportunities.listRecent, {
-    limit: 6,
-  });
   const recentFeed = useQuery(api.feed.list, { limit: 6 });
 
   const hotCities = cities
@@ -178,65 +176,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Live Opportunities Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between mb-10">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-black tracking-tight">
-                Trending Opportunities
-              </h2>
-              <p className="text-muted-foreground mt-2">
-                Latest deals spotted across the region
-              </p>
-            </div>
-            <Link href="/map">
-              <Button variant="outline" className="gap-2">
-                View All
-                <ArrowRight className="h-4 w-4" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentOpportunities?.slice(0, 6).map((opp, idx) => (
-              <Card key={opp._id} className="overflow-hidden hover:shadow-lg transition-shadow p-0">
-                <div className="bg-gradient-to-br from-[#f5f7f9] to-[#e5e7eb] dark:from-secondary dark:to-secondary/50 h-48 flex items-center justify-center relative">
-                  {idx === 0 && (
-                    <Badge className="absolute top-4 right-4">
-                      HOT
-                    </Badge>
-                  )}
-                  <div className="text-6xl">🎴</div>
-                </div>
-                <div className="p-6 space-y-4">
-                  <div>
-                    <h3 className="text-lg font-bold line-clamp-1 mb-1">
-                      {opp.title}
-                    </h3>
-                    <p className="text-sm text-muted-foreground line-clamp-2">
-                      {opp.description || "Premium trading card opportunity"}
-                    </p>
-                  </div>
-                  <div className="flex items-center justify-between pt-2 border-t">
-                    <div>
-                      <div className="text-2xl font-bold text-[#163300] dark:text-[#9FE870]">
-                        {opp.priceCurrency} {opp.priceLocal.toFixed(2)}
-                      </div>
-                      {opp.priceSpread && (
-                        <div className="text-xs text-muted-foreground">
-                          +{opp.priceSpread}% potential spread
-                        </div>
-                      )}
-                    </div>
-                    <Badge variant="secondary">{opp.category}</Badge>
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
+      <TrendingOpportunities />
 
       {/* Categories Section */}
       <section className="py-20 bg-[#f5f7f9] dark:bg-secondary/30">
