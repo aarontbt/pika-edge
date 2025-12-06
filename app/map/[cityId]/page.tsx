@@ -2,7 +2,7 @@
 
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import { Doc, Id } from "@/convex/_generated/dataModel";
 import { useParams, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -16,6 +16,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, MapPin, TrendingUp, ExternalLink } from "lucide-react";
 import { PRODUCT_CATEGORIES } from "@/lib/constants/categories";
+import { FeedItem as FeedItemCard } from "@/components/feed/feed-item";
 
 export const dynamic = "force-dynamic";
 
@@ -40,8 +41,13 @@ export default function CityDetailPage() {
   const opportunities =
     (useQuery(api.opportunities.listByCity, { cityId }) as OpportunityListItem[] | undefined) ??
     [];
+  const feedItems = useQuery(api.feed.getByCity, {
+    cityId,
+    limit: 12,
+  }) as Doc<"feedItems">[] | undefined;
+  const cityFeed = feedItems ?? [];
 
-  if (city === undefined || opportunities === undefined) {
+  if (city === undefined || opportunities === undefined || feedItems === undefined) {
     return <CityDetailSkeleton />;
   }
 
@@ -74,7 +80,7 @@ export default function CityDetailPage() {
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50">
+      <header className="border-b bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 sticky top-0 z-50">
         <div className="container mx-auto px-4">
           <div className="flex h-14 items-center gap-4">
             <Button variant="ghost" size="icon" onClick={() => router.push("/map")}>
@@ -111,8 +117,8 @@ export default function CityDetailPage() {
           </Card>
           <Card>
             <CardContent className="pt-6">
-              <div className="text-3xl font-bold">{opportunities.length}</div>
-              <p className="text-sm text-muted-foreground">Shown</p>
+              <div className="text-3xl font-bold">{cityFeed.length}</div>
+              <p className="text-sm text-muted-foreground">Live Signals Shown</p>
             </CardContent>
           </Card>
           <Card>
@@ -122,6 +128,27 @@ export default function CityDetailPage() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Live city feed */}
+        <section className="mb-10">
+          <div className="flex items-center justify-between mb-3">
+            <h2 className="text-xl font-semibold">Live activity in {city.name}</h2>
+            <p className="text-sm text-muted-foreground">{cityFeed.length} recent</p>
+          </div>
+          {cityFeed.length === 0 ? (
+            <Card>
+              <CardContent className="py-6 text-center text-muted-foreground">
+                No live signals yet for this city.
+              </CardContent>
+            </Card>
+          ) : (
+            <div className="grid md:grid-cols-2 gap-3">
+              {cityFeed.map((item) => (
+                <FeedItemCard key={item._id} item={item} />
+              ))}
+            </div>
+          )}
+        </section>
 
         {/* Opportunities */}
         <h2 className="text-xl font-semibold mb-4">Opportunities in {city.name}</h2>
