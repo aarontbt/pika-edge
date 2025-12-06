@@ -6,12 +6,9 @@ import { GlobalFeed } from "@/components/feed/global-feed";
 import { FeedFiltersState } from "@/components/feed/feed-filters";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { useMutation } from "convex/react";
-import { api } from "@/convex/_generated/api";
-import { ArrowLeft, Database, Menu, Moon, Sun } from "lucide-react";
+import { ArrowLeft, Menu, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
-import { toast } from "sonner";
 
 export default function MapPage() {
   const [filters, setFilters] = useState<FeedFiltersState>({
@@ -20,28 +17,6 @@ export default function MapPage() {
   });
   const [feedOpen, setFeedOpen] = useState(false);
   const { theme, setTheme } = useTheme();
-  const seedCities = useMutation(api.cities.seed);
-  const seedOpportunities = useMutation(api.opportunities.seed);
-  const seedFeed = useMutation(api.feed.seed);
-
-  const handleSeedData = async () => {
-    try {
-      toast.info("Seeding database...");
-      const citiesResult = await seedCities();
-      toast.success(citiesResult.message);
-
-      const opportunitiesResult = await seedOpportunities();
-      toast.success(opportunitiesResult.message);
-
-      const feedResult = await seedFeed();
-      toast.success(feedResult.message);
-
-      toast.success("Database seeded successfully!");
-    } catch (error) {
-      toast.error("Failed to seed database");
-      console.error(error);
-    }
-  };
 
   return (
     <div className="h-screen flex flex-col">
@@ -85,15 +60,6 @@ export default function MapPage() {
                 <GlobalFeed filters={filters} onFiltersChange={setFilters} />
               </SheetContent>
             </Sheet>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleSeedData}
-              className="gap-2 rounded-full"
-            >
-              <Database className="h-4 w-4" />
-              <span className="hidden sm:inline">Seed Data</span>
-            </Button>
             <Button
               variant="ghost"
               size="icon"

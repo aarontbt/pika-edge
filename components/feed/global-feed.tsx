@@ -1,11 +1,14 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { useQuery } from "convex/react";
+import { useAction, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters, FeedFiltersState } from "./feed-filters";
 import { FeedItem } from "./feed-item";
+import { Button } from "@/components/ui/button";
+import { Loader2, RefreshCcw } from "lucide-react";
+import { toast } from "sonner";
 
 interface GlobalFeedProps {
   filters?: FeedFiltersState;
@@ -24,6 +27,7 @@ export function GlobalFeed({
     country: null,
     category: null,
   });
+  const [refreshing, setRefreshing] = useState(false);
 
   const filters = controlledFilters ?? internalFilters;
   const setFilters = onFiltersChange ?? setInternalFilters;
@@ -33,6 +37,23 @@ export function GlobalFeed({
     category: filters.category,
     limit,
   });
+  // @ts-expect-error dataIngestion is newly added and will be present once Convex codegen updates
+  const runDataIngestion = useAction(api.actions.dataIngestion.dataIngestion);
+
+  const handleRefresh = async () => {
+    if (refreshing) return;
+    setRefreshing(true);
+    toast.info("Refreshing data...");
+    try {
+      const result = await runDataIngestion({});
+      toast.success(result?.message ?? "Data refreshed");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to refresh data");
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   const headerLabel = useMemo(() => {
     if (filters.country && filters.category) {
@@ -55,9 +76,25 @@ export function GlobalFeed({
               Real-time feed across the region
             </p>
           </div>
-          <span className="text-xs text-muted-foreground">
-            {feedItems?.length ?? 0} items
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-muted-foreground">
+              {feedItems?.length ?? 0} items
+            </span>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={handleRefresh}
+              disabled={refreshing}
+            >
+              {refreshing ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <RefreshCcw className="h-4 w-4" />
+              )}
+              <span className="sr-only">Refresh feed data</span>
+            </Button>
+          </div>
         </div>
         <div className="mt-4">
           <FeedFilters filters={filters} onFiltersChange={setFilters} />
