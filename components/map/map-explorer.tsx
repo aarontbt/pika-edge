@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Doc } from "@/convex/_generated/dataModel";
 
 // Dynamically import map components to avoid SSR issues with Leaflet
 const MapContainer = dynamic(
@@ -45,22 +46,56 @@ function MapSkeleton() {
 
 interface MapExplorerProps {
   countryFilter?: string | null;
+  categoryFilter?: string | null;
 }
 
-export function MapExplorer({ countryFilter }: MapExplorerProps) {
-  const cities = useQuery(api.cities.list);
-  const filteredCities = useMemo(() => {
-    if (!cities) return [];
-    return countryFilter
-      ? cities.filter((city) => city.country === countryFilter)
-      : cities;
-  }, [cities, countryFilter]);
+const FEED_ITEMS_LIMIT = 200;
 
-  if (cities === undefined) {
+function calculateActivityLevel(count: number): Doc<"cities">["activityLevel"] {
+  if (count >= 20) return "hot";
+  if (count >= 10) return "warm";
+  if (count >= 5) return "normal";
+  return "cold";
+}
+
+export function MapExplorer({ countryFilter, categoryFilter }: MapExplorerProps) {
+  const cities = useQuery(api.cities.list);
+  const feedItems = useQuery(api.feed.list, {
+    country: countryFilter,
+    category: categoryFilter,
+    limit: FEED_ITEMS_LIMIT,
+  });
+
+  const activeCities = useMemo(() => {
+    if (!cities || !feedItems) return [];
+
+    const cityOpportunities = feedItems.reduce<Map<string, Set<string>>>((acc, item) => {
+      const key = item.opportunityId ?? item._id;
+      const set = acc.get(item.cityId) ?? new Set<string>();
+      set.add(key);
+      acc.set(item.cityId, set);
+      return acc;
+    }, new Map());
+
+    return cities
+      .filter((city) => cityOpportunities.has(city._id))
+      .map((city) => {
+        const opportunityCount = cityOpportunities.get(city._id)?.size ?? 0;
+        return {
+          ...city,
+          opportunityCount,
+          activityLevel: calculateActivityLevel(opportunityCount),
+        };
+      });
+  }, [cities, feedItems]);
+
+  const isLoading = cities === undefined || feedItems === undefined;
+
+  if (isLoading) {
     return <MapSkeleton />;
   }
 
-  const showEmptyState = filteredCities.length === 0;
+  const showEmptyState = activeCities.length === 0;
 
   return (
     <div className="relative h-full w-full">
@@ -76,7 +111,7 @@ export function MapExplorer({ countryFilter }: MapExplorerProps) {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
-        {filteredCities.map((city) => (
+        {activeCities.map((city) => (
           <CityTile key={city._id} city={city} />
         ))}
       </MapContainer>

@@ -77,7 +77,10 @@ export default function MapPage() {
       {/* Map + Feed */}
       <main className="flex-1 flex overflow-hidden min-h-0">
         <div className="flex-1 relative min-h-0">
-          <MapExplorer countryFilter={filters.country} />
+          <MapExplorer
+            countryFilter={filters.country}
+            categoryFilter={filters.category}
+          />
         </div>
         <aside className="hidden lg:flex lg:flex-col w-[380px] border-l bg-background min-h-0 overflow-hidden">
           <GlobalFeed filters={filters} onFiltersChange={setFilters} />
