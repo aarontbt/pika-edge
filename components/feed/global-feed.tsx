@@ -69,7 +69,7 @@ export function GlobalFeed({
           <FeedSkeleton />
         ) : hasItems ? (
           <div className="h-full overflow-y-auto overflow-x-hidden">
-            <div className="p-4 space-y-3">
+            <div className="p-3 space-y-3">
               {feedItems?.map((item) => (
                 <FeedItem key={item._id} item={item} onJumpToMap={onJumpToMap} />
               ))}
@@ -87,7 +87,7 @@ export function GlobalFeed({
 
 function FeedSkeleton() {
   return (
-    <div className="p-4 space-y-3">
+    <div className="p-3 space-y-2">
       {[1, 2, 3, 4, 5].map((i) => (
         <Skeleton key={i} className="h-20 w-full" />
       ))}

@@ -1,6 +1,31 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 
+export const getById = query({
+  args: {
+    id: v.id("feedItems"),
+  },
+  handler: async (ctx, args) => {
+    const feedItem = await ctx.db.get(args.id);
+    if (!feedItem) return null;
+
+    // Get linked opportunity if exists
+    let opportunity = null;
+    if (feedItem.opportunityId) {
+      opportunity = await ctx.db.get(feedItem.opportunityId);
+    }
+
+    // Get city details
+    const city = await ctx.db.get(feedItem.cityId);
+
+    return {
+      ...feedItem,
+      opportunity,
+      city,
+    };
+  },
+});
+
 export const list = query({
   args: {
     country: v.optional(v.union(v.string(), v.null())),

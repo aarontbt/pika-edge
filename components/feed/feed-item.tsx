@@ -6,6 +6,7 @@ import { Doc } from "@/convex/_generated/dataModel";
 import { formatDistanceToNow } from "date-fns";
 import { AlertTriangle, Bell, ImageOff, Sparkles, TrendingUp } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import { useState } from "react";
 
 const typeIcons = {
@@ -30,16 +31,14 @@ interface FeedItemProps {
   onJumpToMap?: (cityId: string) => void;
 }
 
-export function FeedItem({ item, onJumpToMap }: FeedItemProps) {
+export function FeedItem({ item }: FeedItemProps) {
   const Icon = typeIcons[item.type];
   const styles = typeStyles[item.type];
   const [imageError, setImageError] = useState(false);
 
   return (
-    <Card
-      className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden w-full"
-      onClick={() => onJumpToMap?.(item.cityId)}
-    >
+    <Link href={`/item/${item._id}`} className="block">
+      <Card className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden w-full">
       <CardContent className="p-3">
         <div className="flex items-start gap-3">
           {/* Image thumbnail */}
@@ -90,5 +89,6 @@ export function FeedItem({ item, onJumpToMap }: FeedItemProps) {
         </div>
       </CardContent>
     </Card>
+    </Link>
   );
 }
