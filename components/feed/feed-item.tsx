@@ -34,18 +34,18 @@ export function FeedItem({ item, onJumpToMap }: FeedItemProps) {
 
   return (
     <Card
-      className="cursor-pointer hover:shadow-md transition-shadow"
+      className="cursor-pointer hover:shadow-md transition-shadow overflow-hidden w-full"
       onClick={() => onJumpToMap?.(item.cityId)}
     >
       <CardContent className="p-4">
         <div className="flex items-start gap-3">
-          <div className={`p-2 rounded-full ${styles.bg} ${styles.text}`}>
+          <div className={`p-2 rounded-full shrink-0 ${styles.bg} ${styles.text}`}>
             <Icon className="h-4 w-4" />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2">
-              <p className="font-semibold text-sm truncate">{item.title}</p>
-              <Badge variant="secondary" className="text-xs shrink-0">
+          <div className="flex-1 min-w-0 overflow-hidden">
+            <div className="flex items-center gap-2 min-w-0">
+              <p className="font-semibold text-sm truncate flex-1 min-w-0">{item.title}</p>
+              <Badge variant="secondary" className="text-xs shrink-0 truncate max-w-[80px]">
                 {item.category}
               </Badge>
             </div>

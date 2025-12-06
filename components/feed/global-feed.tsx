@@ -3,7 +3,6 @@
 import { useMemo, useState } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters, FeedFiltersState } from "./feed-filters";
 import { FeedItem } from "./feed-item";
@@ -47,8 +46,8 @@ export function GlobalFeed({
   const hasItems = (feedItems?.length ?? 0) > 0;
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="p-4 border-b bg-background/80 backdrop-blur">
+    <div className="flex h-full min-h-0 flex-col w-full overflow-hidden">
+      <div className="p-4 border-b bg-background/80 backdrop-blur shrink-0">
         <div className="flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold">{headerLabel}</p>
@@ -65,17 +64,17 @@ export function GlobalFeed({
         </div>
       </div>
 
-      <div className="flex-1">
+      <div className="flex-1 min-h-0 overflow-hidden">
         {feedItems === undefined ? (
           <FeedSkeleton />
         ) : hasItems ? (
-          <ScrollArea className="h-full">
+          <div className="h-full overflow-y-auto overflow-x-hidden">
             <div className="p-4 space-y-3">
               {feedItems?.map((item) => (
                 <FeedItem key={item._id} item={item} onJumpToMap={onJumpToMap} />
               ))}
             </div>
-          </ScrollArea>
+          </div>
         ) : (
           <div className="h-full flex items-center justify-center text-sm text-muted-foreground px-6 text-center">
             No activity yet for these filters.

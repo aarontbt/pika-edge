@@ -63,10 +63,11 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
     <div className="flex flex-col gap-3">
       <div className="grid grid-cols-2 gap-3">
         <Select
+          className="w-full"
           value={filters.country ?? undefined}
           onValueChange={(val) => handleCountryChange(val)}
         >
-          <SelectTrigger className="h-10">
+          <SelectTrigger className="h-10 w-full">
             <SelectValue placeholder="Country" />
           </SelectTrigger>
           <SelectContent>
@@ -80,10 +81,11 @@ export function FeedFilters({ filters, onFiltersChange }: FeedFiltersProps) {
         </Select>
 
         <Select
+          className="w-full"
           value={filters.category ?? undefined}
           onValueChange={(val) => handleCategoryChange(val)}
         >
-          <SelectTrigger className="h-10">
+          <SelectTrigger className="h-10 w-full">
             <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>

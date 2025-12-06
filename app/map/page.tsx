@@ -78,7 +78,10 @@ export default function MapPage() {
                   Live Feed
                 </Button>
               </SheetTrigger>
-              <SheetContent side="right" className="w-full sm:max-w-md p-0">
+              <SheetContent
+                side="right"
+                className="w-full sm:max-w-md p-0 h-full overflow-hidden"
+              >
                 <GlobalFeed filters={filters} onFiltersChange={setFilters} />
               </SheetContent>
             </Sheet>
@@ -106,11 +109,11 @@ export default function MapPage() {
       </header>
 
       {/* Map + Feed */}
-      <main className="flex-1 flex overflow-hidden">
-        <div className="flex-1 relative">
+      <main className="flex-1 flex overflow-hidden min-h-0">
+        <div className="flex-1 relative min-h-0">
           <MapExplorer countryFilter={filters.country} />
         </div>
-        <aside className="hidden lg:block w-[380px] border-l bg-background">
+        <aside className="hidden lg:flex lg:flex-col w-[380px] border-l bg-background min-h-0 overflow-hidden">
           <GlobalFeed filters={filters} onFiltersChange={setFilters} />
         </aside>
       </main>
