@@ -53,7 +53,7 @@ export function TrendingOpportunities() {
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between mb-10 gap-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-10">
           <div>
             <h2 className="text-3xl md:text-4xl font-black tracking-tight">
               Trending Opportunities
@@ -62,27 +62,9 @@ export function TrendingOpportunities() {
               Latest deals spotted across the region (live data)
             </p>
           </div>
-          <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              className="gap-2"
-              onClick={handleRefresh}
-              disabled={ingesting}
-            >
-              {ingesting ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Fetching live data...
-                </>
-              ) : (
-                <>
-                  Refresh live data
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </Button>
+          <div className="flex flex-wrap gap-2 sm:flex-nowrap sm:justify-end">
             <Link href="/map">
-              <Button variant="outline" className="gap-2">
+              <Button variant="outline" className="gap-2 w-full sm:w-auto">
                 View All
                 <ArrowRight className="h-4 w-4" />
               </Button>
@@ -159,8 +141,8 @@ function OpportunityCard({
             {opportunity.description || "Fresh opportunity just added"}
           </p>
         </div>
-        <div className="flex items-center justify-between pt-2 border-t">
-          <div className="space-y-1">
+        <div className="flex flex-wrap items-start justify-between gap-3 pt-2 border-t">
+          <div className="space-y-1 min-w-0">
             <div className="text-2xl font-bold text-[#163300] dark:text-[#9FE870]">
               {formattedPrice}
             </div>
@@ -175,7 +157,9 @@ function OpportunityCard({
               </div>
             )}
           </div>
-          <Badge variant="secondary">{opportunity.category}</Badge>
+          <Badge variant="secondary" className="shrink-0">
+            {opportunity.category}
+          </Badge>
         </div>
       </CardContent>
     </Card>

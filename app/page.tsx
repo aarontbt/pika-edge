@@ -54,6 +54,7 @@ export default function Home() {
   const hotCities = cities
     ?.filter((c) => c.activityLevel === "hot")
     .slice(0, 3);
+  const tokyoCityId = cities?.find((c) => c.name.toLowerCase() === "tokyo")?._id;
 
   return (
     <div className="min-h-screen bg-background">
@@ -128,10 +129,12 @@ export default function Home() {
                   Explore the Map
                 </Button>
               </Link>
-              <Button size="xl" variant="outline" className="gap-2 w-full sm:w-auto">
-                <TrendingUp className="h-5 w-5" />
-                View Hot Deals
-              </Button>
+              <Link href={tokyoCityId ? `/map/${tokyoCityId}` : "/map"}>
+                <Button size="xl" variant="outline" className="gap-2 w-full sm:w-auto">
+                  <TrendingUp className="h-5 w-5" />
+                  View Hot Deals
+                </Button>
+              </Link>
             </div>
           </div>
 
