@@ -31,7 +31,6 @@ lerna-debug.log*
 
 # Convex
 .convex/
-convex/_generated/
 
 # Vercel
 .vercel
