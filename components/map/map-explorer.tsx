@@ -59,12 +59,13 @@ function calculateActivityLevel(count: number): Doc<"cities">["activityLevel"] {
 }
 
 export function MapExplorer({ countryFilter, categoryFilter }: MapExplorerProps) {
-  const cities = useQuery(api.cities.list);
-  const feedItems = useQuery(api.feed.list, {
-    country: countryFilter,
-    category: categoryFilter,
-    limit: FEED_ITEMS_LIMIT,
-  });
+  const cities = useQuery(api.cities.list) as Doc<"cities">[] | undefined;
+  const feedItems =
+    (useQuery(api.feed.list, {
+      country: countryFilter,
+      category: categoryFilter,
+      limit: FEED_ITEMS_LIMIT,
+    }) as Doc<"feedItems">[] | undefined) ?? [];
 
   const activeCities = useMemo(() => {
     if (!cities || !feedItems) return [];
@@ -75,7 +76,7 @@ export function MapExplorer({ countryFilter, categoryFilter }: MapExplorerProps)
       set.add(key);
       acc.set(item.cityId, set);
       return acc;
-    }, new Map());
+    }, new Map<string, Set<string>>());
 
     return cities
       .filter((city) => cityOpportunities.has(city._id))

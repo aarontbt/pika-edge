@@ -115,7 +115,7 @@ async function fetchAll(ctx: ActionCtx, url: string, cityName: string, pageLimit
 
   while (next && page < pageLimit) {
     console.log("ingestScryfall: fetching page", { page, url: next });
-    const json = await fetchJson<ScryfallResponse>(next, {
+    const json: ScryfallResponse | null = await fetchJson<ScryfallResponse>(next, {
       headers: { "User-Agent": "pikaedge/ingest" },
     });
     if (!json) break;

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useAction, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Doc } from "@/convex/_generated/dataModel";
 import { Skeleton } from "@/components/ui/skeleton";
 import { FeedFilters, FeedFiltersState } from "./feed-filters";
 import { FeedItem } from "./feed-item";
@@ -32,11 +33,12 @@ export function GlobalFeed({
   const filters = controlledFilters ?? internalFilters;
   const setFilters = onFiltersChange ?? setInternalFilters;
 
-  const feedItems = useQuery(api.feed.list, {
-    country: filters.country,
-    category: filters.category,
-    limit,
-  });
+  const feedItems =
+    (useQuery(api.feed.list, {
+      country: filters.country,
+      category: filters.category,
+      limit,
+    }) as Doc<"feedItems">[] | undefined) ?? [];
   const runDataIngestion = useAction(api.actions.ingestScryfall.ingestScryfall);
 
   const handleRefresh = async () => {

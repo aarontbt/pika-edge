@@ -10,7 +10,14 @@ export const dataIngestion = action({
     pageLimit: v.optional(v.number()),
     cityName: v.optional(v.string()),
   },
-  handler: async (ctx, args) => {
+  handler: async (
+    ctx,
+    args
+  ): Promise<{
+    message: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    [key: string]: any;
+  }> => {
     const result = await ctx.runAction(api.actions.ingestScryfall.ingestScryfall, {
       query: args.query,
       pageLimit: args.pageLimit,

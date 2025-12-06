@@ -17,13 +17,27 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { ArrowLeft, MapPin, TrendingUp, ExternalLink } from "lucide-react";
 import { PRODUCT_CATEGORIES } from "@/lib/constants/categories";
 
+type OpportunityListItem = {
+  _id: Id<"opportunities">;
+  title: string;
+  category: string;
+  description?: string;
+  priceCurrency: string;
+  priceLocal: number;
+  priceSpread?: number;
+  referenceCity?: string;
+  sourceUrl?: string;
+};
+
 export default function CityDetailPage() {
   const params = useParams();
   const router = useRouter();
   const cityId = params.cityId as Id<"cities">;
 
   const city = useQuery(api.cities.getById, { cityId });
-  const opportunities = useQuery(api.opportunities.listByCity, { cityId });
+  const opportunities =
+    (useQuery(api.opportunities.listByCity, { cityId }) as OpportunityListItem[] | undefined) ??
+    [];
 
   if (city === undefined || opportunities === undefined) {
     return <CityDetailSkeleton />;

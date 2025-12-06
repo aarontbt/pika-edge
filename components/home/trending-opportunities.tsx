@@ -16,8 +16,7 @@ type Opportunity = Doc<"opportunities"> & { cityId: Id<"cities"> };
 export function TrendingOpportunities() {
   const [ingesting, setIngesting] = useState(false);
   const [ingestionAttempted, setIngestionAttempted] = useState(false);
-  const opportunities = useQuery(api.opportunities.listRecent, { limit: 6 });
-  // @ts-expect-error dataIngestion is newly added and will be present once Convex codegen updates
+  const opportunities = useQuery(api.opportunities.listRecent, { limit: 6 }) as Opportunity[] | undefined;
   const runDataIngestion = useAction(api.actions.dataIngestion.dataIngestion);
 
   const hasData = (opportunities?.length ?? 0) > 0;

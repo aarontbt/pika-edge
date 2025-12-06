@@ -23,10 +23,31 @@ import {
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { TrendingOpportunities } from "@/components/home/trending-opportunities";
+import { Id } from "@/convex/_generated/dataModel";
+
+type City = {
+  _id: Id<"cities">;
+  name: string;
+  countryName?: string;
+  country?: string;
+  activityLevel: "hot" | "warm" | "normal" | "cold";
+  opportunityCount?: number;
+};
+
+type FeedItem = {
+  _id: Id<"feedItems">;
+  title: string;
+  type: "new_opportunity" | "price_drop" | "hot_deal" | "market_alert";
+  cityName: string;
+  country: string;
+  category: string;
+  priceInfo?: string;
+  createdAt: number;
+};
 
 export default function Home() {
-  const cities = useQuery(api.cities.list);
-  const recentFeed = useQuery(api.feed.list, { limit: 6 });
+  const cities = useQuery(api.cities.list) as City[] | undefined;
+  const recentFeed = useQuery(api.feed.list, { limit: 6 }) as FeedItem[] | undefined;
 
   const hotCities = cities
     ?.filter((c) => c.activityLevel === "hot")
