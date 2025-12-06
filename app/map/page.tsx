@@ -1,15 +1,24 @@
 "use client";
 
+import { useState } from "react";
 import { MapExplorer } from "@/components/map/map-explorer";
+import { GlobalFeed } from "@/components/feed/global-feed";
+import { FeedFiltersState } from "@/components/feed/feed-filters";
 import { Button } from "@/components/ui/button";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
-import { ArrowLeft, Database, Moon, Sun } from "lucide-react";
+import { ArrowLeft, Database, Menu, Moon, Sun } from "lucide-react";
 import Link from "next/link";
 import { useTheme } from "next-themes";
 import { toast } from "sonner";
 
 export default function MapPage() {
+  const [filters, setFilters] = useState<FeedFiltersState>({
+    country: null,
+    category: null,
+  });
+  const [feedOpen, setFeedOpen] = useState(false);
   const { theme, setTheme } = useTheme();
   const seedCities = useMutation(api.cities.seed);
   const seedOpportunities = useMutation(api.opportunities.seed);
@@ -58,6 +67,21 @@ export default function MapPage() {
             </div>
           </div>
           <div className="flex items-center gap-3">
+            <Sheet open={feedOpen} onOpenChange={setFeedOpen}>
+              <SheetTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 rounded-full lg:hidden"
+                >
+                  <Menu className="h-4 w-4" />
+                  Live Feed
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="right" className="w-full sm:max-w-md p-0">
+                <GlobalFeed filters={filters} onFiltersChange={setFilters} />
+              </SheetContent>
+            </Sheet>
             <Button
               variant="outline"
               size="sm"
@@ -81,9 +105,14 @@ export default function MapPage() {
         </div>
       </header>
 
-      {/* Map */}
-      <main className="flex-1 relative">
-        <MapExplorer />
+      {/* Map + Feed */}
+      <main className="flex-1 flex overflow-hidden">
+        <div className="flex-1 relative">
+          <MapExplorer countryFilter={filters.country} />
+        </div>
+        <aside className="hidden lg:block w-[380px] border-l bg-background">
+          <GlobalFeed filters={filters} onFiltersChange={setFilters} />
+        </aside>
       </main>
     </div>
   );

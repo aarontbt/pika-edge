@@ -1,6 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useMemo } from "react";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -42,12 +43,24 @@ function MapSkeleton() {
   );
 }
 
-export function MapExplorer() {
+interface MapExplorerProps {
+  countryFilter?: string | null;
+}
+
+export function MapExplorer({ countryFilter }: MapExplorerProps) {
   const cities = useQuery(api.cities.list);
+  const filteredCities = useMemo(() => {
+    if (!cities) return [];
+    return countryFilter
+      ? cities.filter((city) => city.country === countryFilter)
+      : cities;
+  }, [cities, countryFilter]);
 
   if (cities === undefined) {
     return <MapSkeleton />;
   }
+
+  const showEmptyState = filteredCities.length === 0;
 
   return (
     <div className="relative h-full w-full">
@@ -63,11 +76,18 @@ export function MapExplorer() {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
           url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         />
-        {cities.map((city) => (
+        {filteredCities.map((city) => (
           <CityTile key={city._id} city={city} />
         ))}
       </MapContainer>
       <MapLegend />
+      {showEmptyState && (
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="bg-background/80 backdrop-blur px-4 py-3 rounded-lg shadow-md text-sm text-muted-foreground">
+            No cities match the selected filters yet.
+          </div>
+        </div>
+      )}
     </div>
   );
 }

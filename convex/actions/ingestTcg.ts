@@ -98,10 +98,13 @@ export const ingestPokemonCards = action({
 
     const cached = await getCache(ctx, cacheKey);
     if (cached && Date.now() - cached.lastFetched < CACHE_TTL_MS) {
+      console.log('ingestPokemonCards: cache hit', { cacheKey });
       return { inserted: 0, feedInserted: 0, message: "Pokemon cache hit" };
     }
 
     const url = `${POKEMON_API}?pageSize=${pageSize}&orderBy=-tcgplayer.prices.holofoil.market`;
+
+    console.log('ingestPokemonCards: fetching', { url, pageSize });
 
     const json = await fetchJson<{ data?: PokemonCard[] }>(url, {
       headers: {
@@ -111,6 +114,7 @@ export const ingestPokemonCards = action({
     });
 
     const cards = json?.data ?? [];
+    console.log('ingestPokemonCards: fetched', { count: cards.length });
 
     const items: CollectibleInput[] = cards
       .map((card): CollectibleInput | null => {
@@ -144,6 +148,7 @@ export const ingestPokemonCards = action({
       .filter((card): card is CollectibleInput => Boolean(card));
 
     if (items.length === 0) {
+      console.log('ingestOnePieceCards: no priced cards', { cards: cards.length });
       return { inserted: 0, feedInserted: 0, message: "No priced cards found" };
     }
 
@@ -151,6 +156,8 @@ export const ingestPokemonCards = action({
       items,
       createFeed: true,
     });
+
+    console.log('ingestOnePieceCards: mutation result', result);
 
     await upsertCache(ctx, cacheKey);
 
@@ -183,19 +190,24 @@ export const ingestOnePieceCards = action({
 
     const cached = await getCache(ctx, cacheKey);
     if (cached && Date.now() - cached.lastFetched < CACHE_TTL_MS) {
+      console.log('ingestOnePieceCards: cache hit', { cacheKey });
       return { inserted: 0, feedInserted: 0, message: "One Piece cache hit" };
     }
 
     const url = `${ONE_PIECE_API}?pageSize=${pageSize}`;
 
+    console.log('ingestOnePieceCards: fetching', { url, pageSize });
+
     const json = await fetchJson<{ data?: OnePieceCard[] }>(url, {
       headers: { "User-Agent": "pikaedge/ingest" },
     });
     if (!json) {
+      console.log('ingestOnePieceCards: api unavailable');
       return { inserted: 0, feedInserted: 0, message: "One Piece API unavailable" };
     }
 
     const cards = json.data ?? [];
+    console.log('ingestOnePieceCards: fetched', { count: cards.length });
 
     const items: CollectibleInput[] = cards
       .map((card): CollectibleInput | null => {
@@ -227,6 +239,7 @@ export const ingestOnePieceCards = action({
       .filter((card): card is CollectibleInput => Boolean(card));
 
     if (items.length === 0) {
+      console.log('ingestOnePieceCards: no priced cards', { cards: cards.length });
       return { inserted: 0, feedInserted: 0, message: "No priced cards found" };
     }
 
@@ -234,6 +247,8 @@ export const ingestOnePieceCards = action({
       items,
       createFeed: true,
     });
+
+    console.log('ingestOnePieceCards: mutation result', result);
 
     await upsertCache(ctx, cacheKey);
 
