@@ -156,12 +156,12 @@ export const ingestCarousellListings = action({
     const items = json?.items ?? [];
     console.log("ingestCarousell: fetched", { count: items.length });
 
+    // Detect subcategory from the first keyword (items are already filtered by all keywords)
+    const primaryKeyword = args.keywords[0] ?? "";
     const collected: CollectibleInput[] = [];
-    for (const kw of args.keywords) {
-      for (const item of items) {
-        const mapped = mapItemToCollectible(item, kw, cityName);
-        if (mapped) collected.push(mapped);
-      }
+    for (const item of items) {
+      const mapped = mapItemToCollectible(item, primaryKeyword, cityName);
+      if (mapped) collected.push(mapped);
     }
 
     if (collected.length === 0) {

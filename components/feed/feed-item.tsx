@@ -4,7 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Doc } from "@/convex/_generated/dataModel";
 import { formatDistanceToNow } from "date-fns";
-import { AlertTriangle, Bell, ImageOff, Sparkles, TrendingUp } from "lucide-react";
+import { AlertTriangle, Bell, ImageOff, MapPin, Sparkles, TrendingUp } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -31,10 +31,16 @@ interface FeedItemProps {
   onJumpToMap?: (cityId: string) => void;
 }
 
-export function FeedItem({ item }: FeedItemProps) {
+export function FeedItem({ item, onJumpToMap }: FeedItemProps) {
   const Icon = typeIcons[item.type];
   const styles = typeStyles[item.type];
   const [imageError, setImageError] = useState(false);
+
+  const handleMapClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onJumpToMap?.(item.cityId);
+  };
 
   return (
     <Link href={`/item/${item._id}`} className="block">
@@ -68,6 +74,15 @@ export function FeedItem({ item }: FeedItemProps) {
           <div className="flex-1 min-w-0 overflow-hidden">
             <div className="flex items-center gap-2 min-w-0">
               <p className="font-semibold text-sm truncate flex-1 min-w-0">{item.title}</p>
+              {onJumpToMap && (
+                <button
+                  onClick={handleMapClick}
+                  className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
+                  title={`View ${item.cityName} on map`}
+                >
+                  <MapPin className="h-3.5 w-3.5 text-muted-foreground hover:text-primary" />
+                </button>
+              )}
             </div>
             <div className="flex items-center gap-2 mt-1">
               <Badge variant="secondary" className="text-[10px] shrink-0">

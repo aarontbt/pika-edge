@@ -48,6 +48,21 @@ async function upsertCache(ctx: ActionCtx, key: string) {
   });
 }
 
+type CollectibleInput = {
+  title: string;
+  description?: string;
+  category: string;
+  subcategory?: string;
+  externalId?: string;
+  priceLocal: number;
+  priceCurrency: string;
+  priceSpread?: number;
+  referenceCity?: string;
+  sourceUrl?: string;
+  imageUrl?: string;
+  cityName?: string;
+};
+
 type ScryfallCard = {
   id: string;
   name: string;

@@ -33,21 +33,46 @@ export const list = query({
     limit: v.optional(v.number()),
   },
   handler: async (ctx, args) => {
-    let items = await ctx.db
+    const limit = args.limit ?? 50;
+    const country = args.country ?? null;
+    const category = args.category ?? null;
+
+    // Use appropriate index based on filters to honor the limit correctly
+    if (country && category) {
+      // Both filters: use country index, then filter by category
+      const items = await ctx.db
+        .query("feedItems")
+        .withIndex("by_country_created", (q) => q.eq("country", country))
+        .order("desc")
+        .filter((q) => q.eq(q.field("category"), category))
+        .take(limit);
+      return items;
+    }
+
+    if (country) {
+      // Country filter only
+      return await ctx.db
+        .query("feedItems")
+        .withIndex("by_country_created", (q) => q.eq("country", country))
+        .order("desc")
+        .take(limit);
+    }
+
+    if (category) {
+      // Category filter only
+      return await ctx.db
+        .query("feedItems")
+        .withIndex("by_category_created", (q) => q.eq("category", category))
+        .order("desc")
+        .take(limit);
+    }
+
+    // No filters: use general created index
+    return await ctx.db
       .query("feedItems")
       .withIndex("by_created")
       .order("desc")
-      .take(args.limit ?? 50);
-
-    if (args.country) {
-      items = items.filter((item) => item.country === args.country);
-    }
-
-    if (args.category) {
-      items = items.filter((item) => item.category === args.category);
-    }
-
-    return items;
+      .take(limit);
   },
 });
 

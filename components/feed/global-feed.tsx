@@ -37,8 +37,7 @@ export function GlobalFeed({
     category: filters.category,
     limit,
   });
-  // @ts-expect-error dataIngestion is newly added and will be present once Convex codegen updates
-  const runDataIngestion = useAction(api.actions.dataIngestion.dataIngestion);
+  const runDataIngestion = useAction(api.actions.ingestScryfall.ingestScryfall);
 
   const handleRefresh = async () => {
     if (refreshing) return;
