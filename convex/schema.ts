@@ -131,4 +131,31 @@ export default defineSchema({
     key: v.string(),         // e.g., "pokemon" or "onepiece"
     lastFetched: v.number(), // timestamp in ms
   }).index("by_key", ["key"]),
+
+  // Social sentiment snapshots for opportunities
+  socialSentiment: defineTable({
+    opportunityId: v.id("opportunities"),
+    platform: v.literal("x.com"),
+    posts: v.array(
+      v.object({
+        postId: v.string(),
+        authorHandle: v.string(),
+        authorName: v.optional(v.string()),
+        content: v.string(),
+        postedAt: v.number(),
+        url: v.string(),
+        metrics: v.optional(
+          v.object({
+            likes: v.optional(v.number()),
+            reposts: v.optional(v.number()),
+            replies: v.optional(v.number()),
+          })
+        ),
+      })
+    ),
+    lastFetched: v.number(),
+    searchQuery: v.string(),
+  })
+    .index("by_opportunity", ["opportunityId"])
+    .index("by_last_fetched", ["lastFetched"]),
 });

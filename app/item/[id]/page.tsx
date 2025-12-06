@@ -24,6 +24,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { SocialPosts } from "@/components/sentiment/social-posts";
 
 const typeIcons = {
   new_opportunity: Sparkles,
@@ -88,6 +89,12 @@ export default function ItemDetailPage() {
   const item = useQuery(api.feed.getById, {
     id: itemId as Id<"feedItems">,
   });
+  const sentiment = useQuery(
+    api.sentiment.getSentimentByOpportunity,
+    item?.opportunity
+      ? { opportunityId: item.opportunity._id as Id<"opportunities"> }
+      : "skip"
+  );
 
   const handleShare = async () => {
     try {
@@ -121,8 +128,9 @@ export default function ItemDetailPage() {
     );
   }
 
-  const Icon = typeIcons[item.type];
-  const styles = typeStyles[item.type];
+  const typeKey = item.type as keyof typeof typeIcons;
+  const Icon = typeIcons[typeKey];
+  const styles = typeStyles[typeKey];
   const opportunity = item.opportunity;
 
   return (
@@ -300,6 +308,21 @@ export default function ItemDetailPage() {
                   )}
                 </div>
               )}
+            </Card>
+
+            {/* Social sentiment */}
+            <Card className="p-6 bg-card/80 backdrop-blur-sm border-border/50 shadow-lg space-y-4">
+              <div className="flex items-center justify-between">
+                <h2 className="text-lg font-semibold">What people are saying</h2>
+                <Badge variant="outline" className="text-xs">
+                  X.com
+                </Badge>
+              </div>
+              <SocialPosts
+                posts={item?.opportunity ? sentiment?.posts : []}
+                lastUpdated={item?.opportunity ? sentiment?.lastFetched : undefined}
+                isLoading={Boolean(item?.opportunity) && sentiment === undefined}
+              />
             </Card>
 
             {/* Metadata */}
