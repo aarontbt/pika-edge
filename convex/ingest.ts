@@ -108,6 +108,7 @@ export const insertCollectibles = mutation({
             category: item.category,
             opportunityId,
             priceInfo: `Now ${item.priceCurrency} ${item.priceLocal.toFixed(2)}`,
+            imageUrl: item.imageUrl,
             createdAt: now,
           });
           feedInserted += 1;
@@ -144,6 +145,7 @@ export const insertCollectibles = mutation({
             priceInfo: item.priceSpread
               ? `${item.priceSpread.toFixed(1)}% spread`
               : undefined,
+            imageUrl: item.imageUrl,
             createdAt: now,
           });
           feedInserted += 1;

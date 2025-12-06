@@ -68,6 +68,7 @@ export default defineSchema({
     category: v.string(),
     opportunityId: v.optional(v.id("opportunities")),
     priceInfo: v.optional(v.string()),
+    imageUrl: v.optional(v.string()),
     createdAt: v.number(),
   })
     .index("by_created", ["createdAt"])
