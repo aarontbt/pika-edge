@@ -1,0 +1,90 @@
+"use client";
+
+import { MapExplorer } from "@/components/map/map-explorer";
+import { Button } from "@/components/ui/button";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { ArrowLeft, Database, Moon, Sun } from "lucide-react";
+import Link from "next/link";
+import { useTheme } from "next-themes";
+import { toast } from "sonner";
+
+export default function MapPage() {
+  const { theme, setTheme } = useTheme();
+  const seedCities = useMutation(api.cities.seed);
+  const seedOpportunities = useMutation(api.opportunities.seed);
+  const seedFeed = useMutation(api.feed.seed);
+
+  const handleSeedData = async () => {
+    try {
+      toast.info("Seeding database...");
+      const citiesResult = await seedCities();
+      toast.success(citiesResult.message);
+
+      const opportunitiesResult = await seedOpportunities();
+      toast.success(opportunitiesResult.message);
+
+      const feedResult = await seedFeed();
+      toast.success(feedResult.message);
+
+      toast.success("Database seeded successfully!");
+    } catch (error) {
+      toast.error("Failed to seed database");
+      console.error(error);
+    }
+  };
+
+  return (
+    <div className="h-screen flex flex-col">
+      {/* Header - Wise Style */}
+      <header className="border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 z-50">
+        <div className="flex h-16 items-center justify-between px-4">
+          <div className="flex items-center gap-4">
+            <Link href="/">
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-secondary">
+                <ArrowLeft className="h-5 w-5" />
+              </Button>
+            </Link>
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-[#9FE870] rounded-lg flex items-center justify-center">
+                <span className="text-[#163300] font-bold text-sm">PE</span>
+              </div>
+              <div>
+                <h1 className="text-lg font-bold tracking-tight">Map Explorer</h1>
+                <p className="text-xs text-muted-foreground">
+                  Malaysia • Singapore • Japan
+                </p>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleSeedData}
+              className="gap-2 rounded-full"
+            >
+              <Database className="h-4 w-4" />
+              <span className="hidden sm:inline">Seed Data</span>
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-full"
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+            >
+              <Sun className="h-5 w-5 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+              <Moon className="absolute h-5 w-5 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <span className="sr-only">Toggle theme</span>
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Map */}
+      <main className="flex-1 relative">
+        <MapExplorer />
+      </main>
+    </div>
+  );
+}

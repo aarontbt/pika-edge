@@ -56,7 +56,7 @@ CLERK_SECRET_KEY=<your-clerk-secret-key>
 - **Framework**: Next.js 16 (App Router) with React 19.
 - **Language**: TypeScript with `strict` mode enabled and bundler-style module resolution.
 - **Styling**: Tailwind CSS v4 via CSS-first configuration in `app/globals.css` and PostCSS plugin `@tailwindcss/postcss` (see `postcss.config.mjs`).
-- **UI components**: shadcn/ui.
+- **UI components**: shadcn/ui with Wise-inspired customizations.
 - **Mapping**: shadcn-map (React Leaflet) + `leaflet`.
 - **Backend**: Convex (real-time database + serverless functions).
 - **Authentication**: Clerk (progressive auth model; optional for V1).
@@ -85,7 +85,7 @@ Key files and directories used by the current implementation plan:
   - Sets up the Convex React client and provider (with or without Clerk integration as configured).
 
 - **Routes**
-  - `app/page.tsx` — Landing/home page.
+  - `app/page.tsx` — Landing/home page (Wise-inspired design).
   - `app/map/page.tsx` — Main Map Explorer.
   - `app/map/[cityId]/page.tsx` — City details page.
   - `app/(auth)/sign-in/[[...sign-in]]/page.tsx`, `app/(auth)/sign-up/[[...sign-up]]/page.tsx` — Auth routes (when Clerk enabled).
@@ -105,7 +105,9 @@ Key files and directories used by the current implementation plan:
 
 - **`app/globals.css` (global styles and Tailwind theme)**
   - Imports Tailwind v4 via `@import "tailwindcss";`.
-  - Maps design tokens with `@theme inline` and sets base styles (light/dark via `prefers-color-scheme`).
+  - Wise-inspired color palette with lime green (#9FE870) as primary.
+  - Maps design tokens with `@theme inline` and sets base styles.
+  - Dark mode via class-based toggling (`.dark` class).
 
 - **Static assets: `public/`**
   - Static images and icons used across the app.
@@ -119,6 +121,71 @@ Key files and directories used by the current implementation plan:
 
 ## Tailwind CSS v4 notes
 
-- Tailwind is configured **entirely via CSS** (no `tailwind.config.js`), following Tailwind v4’s CSS‑first model.
+- Tailwind is configured **entirely via CSS** (no `tailwind.config.js`), following Tailwind v4's CSS-first model.
 - Extend the `@theme` block in `app/globals.css` to adjust tokens (colors, fonts, spacing, etc.).
-- Add global utilities/variants via Tailwind’s CSS directives (`@utility`, `@variant`, `@plugin`) in CSS files as needed.
+- Add global utilities/variants via Tailwind's CSS directives (`@utility`, `@variant`, `@plugin`) in CSS files as needed.
+
+## Design System - Wise-Inspired UI
+
+The application uses a **Wise-inspired design language** for a clean, modern aesthetic:
+
+### Brand Colors
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `--wise-green` | `#9FE870` | Primary buttons, badges, accents |
+| `--wise-green-hover` | `#8BD85E` | Button hover states |
+| `--wise-green-light` | `#E8F9DD` | Light backgrounds, success states |
+| `--wise-dark` | `#163300` | Text on green backgrounds |
+
+### Key Design Elements
+
+- **Buttons**: Fully rounded (`rounded-full`), lime green primary with dark text
+- **Cards**: `rounded-2xl` corners, subtle borders (`border-border/60`)
+- **Typography**: Bold headlines (`font-black`), tight tracking
+- **Spacing**: Generous whitespace, clean visual hierarchy
+
+### Button Variants
+
+```tsx
+<Button>Primary Action</Button>              // Lime green
+<Button variant="outline">Secondary</Button> // Border only
+<Button variant="dark">Dark Button</Button>  // Black bg
+<Button variant="ghost">Ghost</Button>       // Transparent
+```
+
+### Map Activity Colors
+
+| Level | Color | Description |
+|-------|-------|-------------|
+| Hot | `#9FE870` | 20+ opportunities |
+| Warm | `#C9F29B` | 10-19 opportunities |
+| Normal | `#1a1a1a` | 5-9 opportunities |
+| Cold | `#9ca3af` | < 5 opportunities |
+
+### Dark Mode
+
+- Uses class-based toggling via `next-themes` with `attribute="class"`
+- Toggle with the theme button in the map header
+- All Wise colors adapt gracefully to dark mode
+
+## Recent Updates
+
+### UI Redesign (Wise-Inspired)
+
+The following components were updated to match Wise's design language:
+
+1. **`app/globals.css`** - New color palette with Wise lime green as primary
+2. **`components/ui/button.tsx`** - Rounded buttons with new variants (`dark`)
+3. **`components/ui/card.tsx`** - Cleaner cards with subtle borders
+4. **`components/ui/badge.tsx`** - Pill-shaped badges with `success` variant
+5. **`app/page.tsx`** - Redesigned landing page with:
+   - Bold headline typography ("ARBITRAGE FOR HERE, THERE AND EVERYWHERE")
+   - Country cards (Malaysia, Singapore, Japan)
+   - Feature highlights section
+   - Trending opportunities grid
+   - Live activity feed
+   - Clean footer
+6. **`components/map/city-tile.tsx`** - Green-themed map markers
+7. **`components/map/map-legend.tsx`** - Updated legend colors
+8. **`app/map/page.tsx`** - Wise-styled header with logo

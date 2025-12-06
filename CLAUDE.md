@@ -154,7 +154,9 @@ This project uses Next.js App Router with the following key files:
 - Provides `useQuery`, `useMutation`, `useAuth` hooks throughout app
 
 **`app/page.tsx`** - Home/landing page at `/`
-- React Server Component by default
+- Client component with Wise-inspired design
+- Features: Hero section, country cards, trending opportunities, categories, live feed
+- Uses Convex queries for real-time data (cities, opportunities, feed)
 - Entry point for users before navigating to map
 
 **`app/map/page.tsx`** - Main map explorer interface
@@ -164,10 +166,13 @@ This project uses Next.js App Router with the following key files:
 
 **`app/globals.css`** - Global styles and Tailwind theme
 - Imports Tailwind v4 via `@import "tailwindcss";`
-- Design tokens in CSS variables on `:root`: `--background`, `--foreground`
-- Dark mode via `@media (prefers-color-scheme: dark)` (not class-based)
+- Wise-inspired color palette with lime green (#9FE870) as primary
+- Design tokens in CSS variables on `:root` and `.dark` selectors
+- Dark mode via class-based toggling (`.dark` class on html element)
 - Tailwind v4 `@theme inline` block maps CSS variables to Tailwind utilities
+- Includes Wise brand colors: `--color-wise-green`, `--color-wise-dark`, etc.
 - Font variables (`--font-sans`, `--font-mono`) linked to Geist fonts from layout
+- Custom Leaflet overrides for map popups and dark mode tile inversion
 
 ### Convex Backend Architecture
 
@@ -225,8 +230,60 @@ This project uses Tailwind CSS v4's **CSS-first configuration** model:
 - All theme configuration lives in `app/globals.css` via the `@theme` block
 - To customize design tokens (colors, fonts, spacing), extend the `@theme` block
 - Custom utilities/variants can be added via `@utility`, `@variant`, `@plugin` directives in CSS files
-- Dark mode uses media query strategy, not class-based toggling
+- Dark mode uses class-based toggling via `next-themes` (ThemeProvider with `attribute="class"`)
 - shadcn/ui components use CSS variables for theming
+
+## Design System - Wise-Inspired
+
+The UI follows **Wise's design language** with these key characteristics:
+
+### Brand Colors
+```css
+/* Primary - Wise Lime Green */
+--wise-green: #9FE870;
+--wise-green-hover: #8BD85E;
+--wise-green-light: #E8F9DD;
+--wise-dark: #163300;
+
+/* Neutral palette */
+--background: #ffffff;
+--foreground: #1a1a1a;
+--muted: #f5f7f9;
+--muted-foreground: #6b7280;
+--border: #e5e7eb;
+```
+
+### Typography
+- **Headlines**: Bold/Black weight (font-black), tight tracking
+- **Body**: Clean sans-serif (Geist), regular weight
+- **Style**: Impactful, condensed headlines like "ARBITRAGE FOR HERE, THERE AND EVERYWHERE"
+
+### UI Components
+- **Buttons**: Fully rounded (`rounded-full`), lime green primary with dark text
+- **Cards**: Rounded corners (`rounded-2xl`), subtle borders, clean shadows
+- **Badges**: Pill-shaped, lime green for primary states
+- **Spacing**: Generous whitespace, clean visual hierarchy
+
+### Button Variants
+```typescript
+// Primary (default) - Lime green with dark text
+<Button>Get Started</Button>
+
+// Outline - Border with transparent background
+<Button variant="outline">View Details</Button>
+
+// Dark - Black background with white text
+<Button variant="dark">Log in</Button>
+
+// Ghost - Transparent, subtle hover
+<Button variant="ghost">Menu Item</Button>
+```
+
+### Map Markers (Activity Levels)
+- **Hot**: Lime green (#9FE870) - 20+ deals
+- **Warm**: Light green (#C9F29B) - 10-19 deals
+- **Normal**: Dark (#1a1a1a) - 5-9 deals
+- **Cold**: Gray (#9ca3af) - < 5 deals
 
 ## Key Patterns
 
