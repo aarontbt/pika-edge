@@ -24,6 +24,9 @@ This file provides guidance to WARP (warp.dev) when working with code in this re
   - `npx convex deploy`
 - Deploy Next.js (optional, if using Vercel):
   - `vercel deploy --prod`
+- Manual social sentiment ingestion (X.com via Firecrawl; cron disabled):
+  - `npx convex run actions/ingestXSentiment ingestXSentiment --opportunityId <id>`
+  - `npx convex run actions/ingestXSentiment ingestXSentimentBatch --limit 5`
 
 Testing is **not** configured yet (no `test` script or Jest/Vitest config is present as of this version of the repo).
 
@@ -49,6 +52,9 @@ NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=<your-clerk-publishable-key>
 CLERK_SECRET_KEY=<your-clerk-secret-key>
 # For Convex auth config (set in Convex dashboard)
 # CLERK_JWT_ISSUER_DOMAIN=https://<your-clerk-domain>
+
+# Firecrawl (Convex env; required for X.com sentiment ingestion)
+# Run: npx convex env set FIRECRAWL_API_KEY=<your-firecrawl-key>
 ```
 
 ## Stack and tooling
@@ -59,6 +65,7 @@ CLERK_SECRET_KEY=<your-clerk-secret-key>
 - **UI components**: shadcn/ui with Wise-inspired customizations.
 - **Mapping**: shadcn-map (React Leaflet) + `leaflet`.
 - **Backend**: Convex (real-time database + serverless functions).
+- **Social sentiment**: Firecrawl-powered X.com ingestion (manual trigger; cron disabled).
 - **Authentication**: Clerk (progressive auth model; optional for V1).
 - **State/data**: Convex React hooks with real-time subscriptions.
 - **Analytics**: Event logging via Convex `analyticsEvents`.

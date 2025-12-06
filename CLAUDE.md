@@ -56,6 +56,7 @@ Note: No test framework is currently configured in this project.
 - **TypeScript** (strict mode, bundler module resolution)
 - **Tailwind CSS v4** (CSS-first configuration via `@tailwindcss/postcss`)
 - **ESLint 9** with `eslint-config-next`
+- **Social sentiment**: Firecrawl-powered X.com ingestion (manual trigger; cron disabled)
 
 ### Backend & Real-time Data
 - **Convex** - Real-time database and serverless functions
@@ -82,6 +83,9 @@ CLERK_SECRET_KEY=<your-clerk-secret-key>
 
 # Clerk JWT for Convex (also configure in Convex dashboard)
 # CLERK_JWT_ISSUER_DOMAIN=https://<your-clerk-domain>
+
+# Firecrawl (Convex env, not .env.local; required for X.com sentiment)
+# Run: npx convex env set FIRECRAWL_API_KEY=<your-firecrawl-key>
 ```
 
 ## Project Structure
@@ -517,6 +521,13 @@ vercel deploy --prod
 - Verify environment variables are set
 - Check `middleware.ts` is configured correctly
 - Ensure JWT template is created in Clerk dashboard
+
+**Social sentiment (X.com) ingestion:**
+- Cron is disabled; run manually:
+  - `npx convex run actions/ingestXSentiment ingestXSentiment --opportunityId <id>`
+  - `npx convex run actions/ingestXSentiment ingestXSentimentBatch --limit 5`
+- Requires `FIRECRAWL_API_KEY` set via `npx convex env set FIRECRAWL_API_KEY=<key>`
+- Batch limit currently 10 to avoid rate limits
 
 **shadcn/ui components not found:**
 - Run `npx shadcn@latest init` first

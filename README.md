@@ -18,6 +18,7 @@ PikaEdge Map Explorer offers arbitrage enthusiasts and data-driven sellers a fas
 - 📍 **City Tiles** - Click metro tiles to drill into local opportunities
 - 📊 **Real-time Global Feed** - Track market shifts and new deals as they happen
 - 🔍 **Smart Filtering** - Filter by country, city, or product category
+- 🧠 **Social Sentiment (X.com)** - Recent X posts on item detail pages (manual refresh)
 - 📱 **Mobile Responsive** - Seamless experience on desktop and mobile
 - 🎯 **Onboarding Tour** - Quick introduction for first-time users
 
@@ -84,6 +85,11 @@ PikaEdge Map Explorer offers arbitrage enthusiasts and data-driven sellers a fas
    CLERK_SECRET_KEY=sk_test_...
    ```
 
+   Set Firecrawl in Convex env (used for X.com sentiment; cron disabled, manual runs only):
+   ```bash
+   npx convex env set FIRECRAWL_API_KEY=<your-firecrawl-key>
+   ```
+
 5. **Run the development server**
    ```bash
    npm run dev
@@ -114,6 +120,10 @@ npm run lint         # Run ESLint
 # Deployment
 npx convex deploy    # Deploy Convex functions
 vercel deploy        # Deploy Next.js to Vercel
+
+# Manual Social Sentiment Ingestion (X.com via Firecrawl; cron currently disabled)
+npx convex run actions/ingestXSentiment ingestXSentiment --opportunityId <id>
+npx convex run actions/ingestXSentiment ingestXSentimentBatch --limit 5
 ```
 
 ### Project Structure
